@@ -54,6 +54,14 @@ fun AddRecipe(
         mutableStateOf(false)
     }
 
+    val title = remember {
+        mutableStateOf("")
+    }
+
+    val desc = remember {
+        mutableStateOf("")
+    }
+
     Column {
         Text(
             modifier = Modifier.padding(8.dp),
@@ -63,9 +71,10 @@ fun AddRecipe(
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = recipe.value.title,
+            value = title.value,
             isError = isTitleError.value,
-            onValueChange = { text -> recipe.value.title = text })
+            onValueChange = { text -> title.value = text },
+            maxLines = 1)
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.clickable { isExpanded.value = true },
@@ -112,9 +121,9 @@ fun AddRecipe(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp),
-            value = recipe.value.desc,
+            value = desc.value,
             isError = isDescError.value,
-            onValueChange = { text -> recipe.value.desc = text },
+            onValueChange = { text -> desc.value = text },
             maxLines = 4
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -132,10 +141,14 @@ fun AddRecipe(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                isTitleError.value = recipe.value.title.isEmpty()
-                isDescError.value = recipe.value.desc.isEmpty()
+                isTitleError.value = title.value.isEmpty()
+                isDescError.value = desc.value.isEmpty()
 
                 if (!isTitleError.value && !isDescError.value) {
+                    recipe.value.apply {
+                        this.title = title.value
+                        this.desc = desc.value
+                    }
                     onAddClick(recipe.value)
                 }
             }) {

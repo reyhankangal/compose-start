@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,16 +99,25 @@ fun DefaultRecipeCard() {
 
 @Composable
 fun RecipeList(recipes: List<Recipe>, onAddClick: () -> Unit) {
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onAddClick
         ) {
             Text(text = "Add New Recipe")
         }
-        LazyColumn {
-            items(recipes) { item: Recipe ->
-                RecipeCard(recipe = item)
+        if (recipes.isEmpty()) {
+            Spacer(modifier = Modifier.height(24.dp))
+            EmptyView(message = "Please Add Recipe...")
+        } else {
+            LazyColumn(
+            ) {
+                items(recipes) { item: Recipe ->
+                    RecipeCard(recipe = item)
+                }
             }
         }
     }
@@ -124,4 +135,35 @@ fun DefaultRecipes() {
     )
     val list = listOf(recipe, recipe, recipe, recipe, recipe, recipe, recipe, recipe, recipe)
     RecipeList(recipes = list, onAddClick = {})
+}
+
+
+@Composable
+fun EmptyView(message: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        (0..2).forEach { _ ->
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_upward),
+                contentDescription = "",
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            )
+        }
+        Text(
+            text = message,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            color = Color.DarkGray
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun DefaultEmptyView() {
+    EmptyView("Please Add Recipe...")
 }
